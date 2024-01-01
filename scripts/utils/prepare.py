@@ -1,12 +1,18 @@
 # Import Statements
+# First party
 import os
-import utils.db as db
 from typing import Final
+
+# Second party
+import utils.db as db
+import utils.logging as logging
+
+# Third party
 
 # File Docstring
 # @LinuxOnARM || prepare.py
 # ---------------------------------------
-# A series of preparation functions for building packages.
+# A series of preparation functions for preparing packages.
 #
 # Authors: @MaxineToTheStars <https://github.com/MaxineToTheStars>
 #          @LinuxOnARM       <https://github.com/LinuxOnARM>
@@ -14,301 +20,319 @@ from typing import Final
 
 # Class Definitions
 class PrepareBuildFunctionNotFound(Exception):
-	# Enums
+    # Enums
 
-	# Interfaces
+    # Interfaces
 
-	# Public Variables
+    # Public Variables
 
-	# Private Variables
+    # Private Variables
 
-	# Constants
+    # Constants
 
-	# Constructor
-	def __init__(self, message: str) -> None:
-		# Class base class constructor
-		super().__init__(message)
+    # Constructor
+    def __init__(self, message: str) -> None:
+        # Class base class constructor
+        super().__init__(message)
 
-	# Public Methods
+    # Public Methods
 
-	# Private Methods
+    # Private Methods
 
 class PrepareBuildFunctions:
-	# Enums
+    # Enums
 
-	# Interfaces
+    # Interfaces
 
-	# Public Variables
+    # Public Variables
 
-	# Private Variables
+    # Private Variables
 
-	# Constants
+    # Constants
 
-	# Constructor
-	def __init__(self) -> None:
-		pass
+    # Constructor
+    def __init__(self) -> None:
+        return
 
-	# Public Methods
-	def prepare_pkg_linux(self, package: db.PackageInfo) -> None:
-		"""
-		Preparation function for linux package
+    # Public Methods
+    def prepare_pkg_linux(self, package: db.PackageInfo) -> None:
+        """
+        Preparation function for linux package
 
-		@param { PackageInfo } package - The package
-		@return None
-		"""
-		# Import statements
-		import os
-		import tarfile
-		import hashlib
-		import subprocess
-		from urllib.request import urlretrieve
+        @param { PackageInfo } package - The package
+        @return None
+        """
+        # Import statements
+        import os
+        import tarfile
+        import hashlib
+        import subprocess
+        from urllib.request import urlretrieve
 
-		# Logging setup
-		logCounter: int = 1
-		numberOfLogs: Final[int] = 11
-		currentPackageName: Final[str] = package.getPackageName()
+        # Setup logging
+        maximumLogCount: Final[int] = 11
+        currentLogCount: int = 1
 
-		# Log
-		logCounter = self._printLog(
-			logCounter,
-			numberOfLogs,
-			currentPackageName,
-			f'Starting package preparations for "{currentPackageName}"...',
-		)
-		logCounter = self._printLog(
-			logCounter,
-			numberOfLogs,
-			currentPackageName,
-			f"Creating temporary directory...",
-		)
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Starting package preparations...",
+        )
 
-		# Preparation directory setup
-		rootDirectory: str = os.getcwd()
-		preparationDirectory: str = "./temp"
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Creating temporary directory...",
+        )
 
-		# Create preparation directory
-		os.mkdir(preparationDirectory)
+        # Preparation directory setup
+        rootDirectory: str = os.getcwd()
+        preparationDirectory: str = "./temp"
 
-		# Switch directories
-		os.chdir(preparationDirectory)
+        # Create preparation directory
+        os.mkdir(preparationDirectory)
 
-		# Retrieve version info
-		kernelVersionNumber: str = package.getPackageVersion()
-		kernelMajorVersionNumber: str = f"{kernelVersionNumber[0]}"
+        # Switch directories
+        os.chdir(preparationDirectory)
 
-		# Log
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, f"Downloading Linux Kernel..."
-		)
+        # Retrieve version info
+        kernelVersionNumber: str = package.getPackageVersion()
+        kernelMajorVersionNumber: str = f"{kernelVersionNumber[0]}"
 
-		# Format the download URL
-		downloadURL: str = package.getPackageURLs().getSourceURL(
-			[kernelMajorVersionNumber, kernelVersionNumber]
-		)
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Downloading Linux Kernel...",
+        )
 
-		# Download the Kernel tarfile
-		urlretrieve(downloadURL, f"linux-{kernelVersionNumber}.tar.xz")
+        # Format the download URL
+        downloadURL: str = package.getPackageURLs().getSourceURL(
+            [kernelMajorVersionNumber, kernelVersionNumber]
+        )
 
-		# Log
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, f"Linux Kernel downloaded..."
-		)
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, f"Extracting Linux Kernel..."
-		)
+        # Download the Kernel tarfile
+        urlretrieve(downloadURL, f"linux-{kernelVersionNumber}.tar.xz")
 
-		# Extract the Kernel
-		kernelTarFile: tarfile.TarFile = tarfile.open(
-			f"linux-{kernelVersionNumber}.tar.xz"
-		)
-		kernelTarFile.extractall(".")
-		kernelTarFile.close()
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Linux Kernel downloaded...",
+        )
 
-		# Log
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, f"Linux Kernel extracted..."
-		)
-		logCounter = self._printLog(
-			logCounter,
-			numberOfLogs,
-			currentPackageName,
-			f"Generating Kernel configuration file for AArch64...",
-		)
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Extracting Linux Kernel...",
+        )
 
-		# Switch directories
-		os.chdir(f"linux-{kernelVersionNumber}")
+        # Extract the Kernel
+        kernelTarFile: tarfile.TarFile = tarfile.open(
+            f"linux-{kernelVersionNumber}.tar.xz"
+        )
+        kernelTarFile.extractall(".")
+        kernelTarFile.close()
 
-		# Generate a new Kernel configuration file
-		subprocess.call(["make", "ARCH=arm64", "defconfig"])
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Linux Kernel extracted...",
+        )
 
-		# Log
-		logCounter = self._printLog(
-			logCounter,
-			numberOfLogs,
-			currentPackageName,
-			f"Kernel configuration file generated...",
-		)
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, f"Modifying PKGBUILD..."
-		)
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Generating Kernel configuration file for AArch64...",
+        )
 
-		# Switch directories
-		os.chdir(rootDirectory)
+        # Switch directories
+        os.chdir(f"linux-{kernelVersionNumber}")
 
-		# Copy the new configuration file to the Linux PKGBUILD directory
-		subprocess.call(
-			[
-				"cp",
-				"--recursive",
-				"--update",
-				"--verbose",
-				f"{preparationDirectory}/linux-{kernelVersionNumber}/.config",
-				f"{package.getPackagePaths().getPackageBuildPath()}/config",
-			]
-		)
+        # Generate a new Kernel configuration file
+        subprocess.call(["make", "ARCH=arm64", "defconfig"])
 
-		# Generate new checksums
-		newCheckSums: str = "{x} SKIP {x}"
-		kernelTarFileCheckSum: str = ""
-		kernelConfigurationFileChecksum: str = ""
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Kernel configuration file generated...",
+        )
 
-		# Kernel checksum
-		with open(
-				f"{preparationDirectory}/linux-{kernelVersionNumber}.tar.xz", "rb"
-		) as kernelTarFile:
-			kernelTarFileCheckSum = hashlib.sha256(
-				kernelTarFile.read()).hexdigest()
-			kernelTarFile.close()
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Modifying PKGBUILD...",
+        )
 
-		# Kernel configuration file checksum
-		with open(
-				f"{preparationDirectory}/linux-{kernelVersionNumber}/.config", "rb"
-		) as kerneConfigurationFile:
-			kernelConfigurationFileChecksum = hashlib.sha256(
-				kerneConfigurationFile.read()
-			).hexdigest()
-			kerneConfigurationFile.close()
+        # Switch directories
+        os.chdir(rootDirectory)
 
-		# Edit the PKGBUILD
-		self._pkgbuildModifyVersionKey(
-			f"{package.getPackageVersion()}.aarch64",
-			package.getPackagePaths().getPackageBuildPath(),
-		)
-		self._pkgbuildModifySha256CheckSumKey(
-			newCheckSums.replace("{x}", kernelTarFileCheckSum, 1).replace(
-				"{x}", kernelConfigurationFileChecksum, 1
-			),
-			package.getPackagePaths().getPackageBuildPath(),
-		)
+        # Copy the new configuration file to the Linux PKGBUILD directory
+        subprocess.call(
+            [
+                "cp",
+                "--recursive",
+                "--update",
+                "--verbose",
+                f"{preparationDirectory}/linux-{kernelVersionNumber}/.config",
+                f"{package.getPackagePaths().getPackageBuildPath()}/config",
+            ]
+        )
 
-		# Log
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, "Cleaning up..."
-		)
+        # Generate new checksums
+        newCheckSums: str = "{x} SKIP {x}"
+        kernelTarFileCheckSum: str = ""
+        kernelConfigurationFileChecksum: str = ""
 
-		# Delete the preparation directory
-		subprocess.call(["rm", "--recursive", "--force", preparationDirectory])
+        # Kernel checksum
+        with open(
+            f"{preparationDirectory}/linux-{kernelVersionNumber}.tar.xz", "rb"
+        ) as kernelTarFile:
+            kernelTarFileCheckSum = hashlib.sha256(kernelTarFile.read()).hexdigest()
+            kernelTarFile.close()
 
-		# Log
-		logCounter = self._printLog(
-			logCounter, numberOfLogs, currentPackageName, "Done!"
-		)
+        # Kernel configuration file checksum
+        with open(
+            f"{preparationDirectory}/linux-{kernelVersionNumber}/.config", "rb"
+        ) as kerneConfigurationFile:
+            kernelConfigurationFileChecksum = hashlib.sha256(
+                kerneConfigurationFile.read()
+            ).hexdigest()
+            kerneConfigurationFile.close()
 
-	# Private Methods
-	def _pkgbuildModifyVersionKey(self, newVersion: str, path: str) -> None:
-		"""
-		Modifies the given PKGBUILD's version entry
+        # Edit the PKGBUILD
+        self._pkgbuildModifyVersionKey(
+            f"{package.getPackageVersion()}.aarch64",
+            package.getPackagePaths().getPackageBuildPath(),
+        )
+        self._pkgbuildModifySha256CheckSumKey(
+            newCheckSums.replace("{x}", kernelTarFileCheckSum, 1).replace(
+                "{x}", kernelConfigurationFileChecksum, 1
+            ),
+            package.getPackagePaths().getPackageBuildPath(),
+        )
 
-		@param { str } newVersion - The new version of the package
-		@param { str } path - The path to the PKGBUILD's directory
-		@return None
-		"""
-		# Sed command
-		sedSyntax: Final[str] = f"s|^pkgver=.*|pkgver={newVersion}|g"
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Cleaning up...",
+        )
 
-		# Execute sed
-		os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
+        # Delete the preparation directory
+        subprocess.call(["rm", "--recursive", "--force", preparationDirectory])
 
-	def _pkgbuildModifySha256CheckSumKey(self, newCheckSum: str, path: str) -> None:
-		"""
-		Modifies the given PKGBUILD's sha256 checksum entry
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Done!",
+        )
 
-		@param { str } newCheckSum - The new checksum
-		@param { str } path - The path to the PKGBUILD's directory
-		@return None
-		"""
-		# Sed command
-		sedSyntax: Final[str] = f"s|^sha256sums=.*|sha256sums=( {newCheckSum} )|g"
+    # Private Methods
+    def _pkgbuildModifyVersionKey(self, newVersion: str, path: str) -> None:
+        """
+        Modifies the given PKGBUILD's version entry
 
-		# Execute sed
-		os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
+        @param { str } newVersion - The new version of the package
+        @param { str } path - The path to the PKGBUILD's directory
+        @return None
+        """
+        # Sed command
+        sedSyntax: Final[str] = f"s|^pkgver=.*|pkgver={newVersion}|g"
 
-	def _printLog(self, counter: int, max: int, packageName: str, message: str) -> int:
-		"""
-		Prints to log a nicely formatted message
+        # Execute sed
+        os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
 
-		@param { int } counter - The current counter value
-		@param { int } max - The maximum amount of log messages
-		@param { str } packageName - The name of the package
-		@param { any | str } message - The message to output
-		@return int - The new value of `counter`
-		"""
-		# Log
-		print(f"[PKG PREPARE][{packageName}][{counter}/{max}] {message}")
+    def _pkgbuildModifySha256CheckSumKey(self, newCheckSum: str, path: str) -> None:
+        """
+        Modifies the given PKGBUILD's sha256 checksum entry
 
-		# Return new counter value
-		return counter + 1
+        @param { str } newCheckSum - The new checksum
+        @param { str } path - The path to the PKGBUILD's directory
+        @return None
+        """
+        # Sed command
+        sedSyntax: Final[str] = f"s|^sha256sums=.*|sha256sums=( {newCheckSum} )|g"
+
+        # Execute sed
+        os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
 
 class PrepareBuild:
-	# Enums
+    # Enums
 
-	# Interfaces
+    # Interfaces
 
-	# Public Variables
+    # Public Variables
 
-	# Private Variables
+    # Private Variables
 
-	# Constants
+    # Constants
 
-	# Constructor
-	def __init__(self) -> None:
-		pass
+    # Constructor
+    def __init__(self) -> None:
+        pass
 
-	# Public Methods
-	def preparePackage(self, package: db.PackageInfo) -> None:
-		"""
-		Runs the package's prepare package function
+    # Public Methods
+    def preparePackage(self, package: db.PackageInfo) -> None:
+        """
+        Runs the package's prepare package function
 
-		@param { PackageInfo } package - The package
-		@return None
-		"""
-		# Check if valid prepare function
-		if not self._isValidPrepareFunction(
-				package.getPackageBuildInfo().getPackagePrepareFunctionName()
-		):
-			raise PrepareBuildFunctionNotFound(
-				f"Prepare function for package \"{package.getPackageName()}\" was not found"
-			)
+        @param { PackageInfo } package - The package
+        @return None
+        """
+        # Check if valid prepare function
+        if not self._isValidPrepareFunction(
+            package.getPackageBuildInfo().getPackagePrepareFunctionName()
+        ):
+            raise PrepareBuildFunctionNotFound(
+                f'Prepare function for package "{package.getPackageName()}" was not found'
+            )
 
-		# Get prepare function
-		prepareBuildFunction = getattr(
-			PrepareBuildFunctions(),
-			package.getPackageBuildInfo().getPackagePrepareFunctionName(),
-		)
+        # Get prepare function
+        prepareBuildFunction = getattr(
+            PrepareBuildFunctions(),
+            package.getPackageBuildInfo().getPackagePrepareFunctionName(),
+        )
 
-		# Run
-		prepareBuildFunction(package)
+        # Run
+        prepareBuildFunction(package)
 
-	# Private Methods
-	def _isValidPrepareFunction(self, functionName: str) -> bool:
-		"""
-		Checks if a given prepare function is valid
+    # Private Methods
+    def _isValidPrepareFunction(self, functionName: str) -> bool:
+        """
+        Checks if a given prepare function is valid
 
-		@param { str } functionName - The name of the function
-		@return bool
-		"""
-		return hasattr(PrepareBuildFunctions, functionName)
+        @param { str } functionName - The name of the function
+        @return bool - Is a valid prepare function
+        """
+        return hasattr(PrepareBuildFunctions, functionName)
 
 # Run
 if __name__ == "__main__":
-	pass
+    pass

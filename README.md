@@ -1,8 +1,5 @@
 # Arch Linux on ARM (ALARM) || Automated PKGBUILDs
-A GitHub repository that automates the process of updating and building packages for the AArch64 architecture
-
-> [!IMPORTANT] 
-> Currently in Development || Missing: Build System
+A GitHub repository that automates the process of updating and building packages for Arch Linux on the AArch64 architecture
 
 ## Usage
 TBA
@@ -11,8 +8,9 @@ TBA
 The following sections detail how the automation and building process occur. The `Synopsis` header in each section give a Tl;DR "overview"
 
 <details>
+
 <!-- Section Title -->
-<summary> 0. Storing packages and their data (in a human readable way) </summary>
+<summary> 0. Storing Packages and their Data </summary>
 
 <!-- Header -->
 #### JSON to the Rescue!
@@ -30,12 +28,12 @@ Using the power of JSON and Python classes a simple to use API can be used to mo
 <details>
 
 <!-- Section Title -->
-<summary> 1. Pulling upstream package data from mainline Arch Linux </summary>
+<summary> 1. Pulling Upstream Package Data from Mainline Arch Linux </summary>
 
 <!-- Header -->
 #### Using the Arch Linux Package List to Our Advantage
 ---
-The Arch Linux package search provides a easy to use way of looking up, flagging, and downloading snapshots of packages. Users can *mark* a certain package or packages as outdated notifying the maintainer to update the PKGBUILD and schedule a rebuild. After a package has been updated the new package information is shows on the package's webpage. In order to *sync-up* with mainstream Arch Linux the Python script [sync_package_database.py][sync-package-database-python-linkage] compares the version number of the currently builded package and the package shows in the Arch Linux package search. If a version mismatch is found it modifies the package's database entry changing the version number and marking it for build.
+The Arch Linux package search provides a easy to use way of looking up, flagging, and downloading snapshots of packages. Users can _mark_ a certain package or packages as outdated notifying the maintainer to update the PKGBUILD and schedule a rebuild. After a package has been updated the new package information is shows on the package's webpage. In order to _sync-up_ with mainstream Arch Linux the Python script [sync_package_database.py][sync-package-database-python-linkage] compares the version number of the currently builded package and the package shows in the Arch Linux package search. If a version mismatch is found it modifies the package's database entry changing the version number and marking it for build.
 
 #### Synopsis
 ---
@@ -46,8 +44,9 @@ Using the power of free labor and a fancy Python script you can kick back and le
 <!-- Separator -->
 
 <details>
+
 <!-- Section Title -->
-<summary>2. Preparing packages for building</summary>
+<summary> 2. Preparing Packages for Building </summary>
 
 <!-- Header -->
 #### Manual Intervention Required
@@ -63,8 +62,9 @@ MFW you have to write a bit of code for this :(
 <!-- Separator -->
 
 <details>
+
 <!-- Section Title -->
-<summary>3. Building packages</summary>
+<summary> 3. Building Packages </summary>
 
 <!-- Header -->
 #### The Fun Part

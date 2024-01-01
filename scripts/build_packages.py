@@ -1,6 +1,13 @@
 # Import Statements
+# First party
+from typing import Final
+
+# Second party
 import utils.db as db
 import utils.build as build
+import utils.logging as logging
+
+# Third party
 
 # File Docstring
 # @LinuxOnARM || build_packages.py
@@ -24,65 +31,70 @@ import utils.build as build
 
 # main()
 def main() -> None:
-	# Instance a new Database
-	database: db.Database = db.Database()
+    # Instance a new Database
+    database: db.Database = db.Database()
 
-	# Instance a new Build system
-	buildSystem: build.Build = build.Build()
+    # Instance a new Build system
+    buildSystem: build.Build = build.Build()
 
-	# Get a list of all packages
-	allPackages: list[db.PackageInfo] = database.getAllPackages()
+    # Get a list of all packages
+    allPackages: Final[list[db.PackageInfo]] = database.getAllPackages()
 
-	# Counter
-	currentPackageCount: int = 1
-	allPackagesCount: int = len(allPackages)
+    # Setup logging
+    maximumLogCount: Final[int] = len(allPackages) + 1
+    currentLogCount: int = 1
 
-	# Iterate through all packages
-	for package in allPackages:
-		# Log
-		_printLog(currentPackageCount, allPackagesCount,
-				  f"Checking build status for \"{package.getPackageName()}\" package...")
+    # Iterate through all packages
+    for package in allPackages:
+        # Log
+        currentLogCount = logging.log(
+            "PACKAGE BUILDING",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Checking build info...",
+        )
 
-		# Check if package is marked for build
-		if not package.getPackageBuildInfo().isMarkedForBuild():
-			# Log
-			_printLog(currentPackageCount, allPackagesCount,
-					  f"Skipping \"{package.getPackageName()}\" || Not marked for build!")
+        # Check if package is marked for build
+        if not package.getPackageBuildInfo().isMarkedForBuild():
+            # Log
+            currentLogCount = logging.log(
+                "PACKAGE PREPARATION",
+                package.getPackageName(),
+                currentLogCount,
+                maximumLogCount,
+                "Skipping package || Not marked for build!...",
+            )
 
-			# Increment counter
-			currentPackageCount += 1
+            # Continue to the next package
+            continue
 
-			# Continue to next package
-			continue
+        # Log
+        currentLogCount = logging.log(
+            "PACKAGE PREPARATION",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Executing build function...",
+        )
 
-		# Log
-		_printLog(currentPackageCount, allPackagesCount,
-				  f"Executing build function...")
-
-		# Execute
-		try:
-			buildSystem.buildPackage(package)
-		except Exception as error:
-			_printLog(currentPackageCount, allPackagesCount,
-					  f"Error while building package || {error}")
-
-		# Increment counter
-		currentPackageCount += 1
+        try:
+            # Execute
+            buildSystem.buildPackage(package)
+        except Exception as error:
+            # Log
+            currentLogCount = logging.log(
+                "PACKAGE PREPARATION",
+                package.getPackageName(),
+                currentLogCount,
+                maximumLogCount,
+                f"Error while preparing package! || {error}",
+            )
 
 # Public Methods
 
 # Private Methods
-def _printLog(counter: int, max: int, message: any) -> None:
-	"""
-	Prints to log a nicely formatted message
-
-	@param { int } counter - The current counter value
-	@param { int } max - The maximum amount of log messages
-	@param { any | str } message - The message to output
-	@return None
-	"""
-	print(f"[PKG BUILD][{counter}/{max}] {message}")
 
 # Run
 if __name__ == "__main__":
-	main()
+    main()
