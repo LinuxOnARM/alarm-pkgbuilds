@@ -117,7 +117,7 @@ def main() -> None:
 # Private Methods
 def _cleanVersionString(rawVersionString: str) -> str:
     """
-    Returns a clean version string
+    Returns a clean version string.
 
     @param { str } rawVersionString - The raw version string
     @return str - A clean version string

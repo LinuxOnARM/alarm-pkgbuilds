@@ -57,17 +57,13 @@ class PrepareBuildFunctions:
     # Public Methods
     def prepare_pkg_linux(self, package: db.PackageInfo) -> None:
         """
-        Preparation function for linux package
+        Preparation function for the `linux-aarch64` package.
 
-        @param { PackageInfo } package - The package
+        @param { PackageInfo } package - The package object
         @return None
         """
-        # Import statements
-        import os
-        import tarfile
-        import hashlib
-        import subprocess
-        from urllib.request import urlretrieve
+        # Import Statements
+        import os, tarfile, subprocess
 
         # Setup logging
         maximumLogCount: Final[int] = 11
@@ -90,17 +86,10 @@ class PrepareBuildFunctions:
             "Creating temporary directory...",
         )
 
-        # Preparation directory setup
-        rootDirectory: str = os.getcwd()
-        preparationDirectory: str = "./temp"
+        # Create temporary directory
+        directories: Final[tuple(str, str)] = self._createTemporaryDirectory()
 
-        # Create preparation directory
-        os.mkdir(preparationDirectory)
-
-        # Switch directories
-        os.chdir(preparationDirectory)
-
-        # Retrieve version info
+        # Retrieve Kernel version info
         kernelVersionNumber: str = package.getPackageVersion()
         kernelMajorVersionNumber: str = f"{kernelVersionNumber[0]}"
 
@@ -113,13 +102,15 @@ class PrepareBuildFunctions:
             "Downloading Linux Kernel...",
         )
 
-        # Format the download URL
-        downloadURL: str = package.getPackageURLs().getSourceURL(
+        # Retrieve a formatted download URL
+        downloadURL: Final[str] = package.getPackageURLs().getSourceURL(
             [kernelMajorVersionNumber, kernelVersionNumber]
         )
 
         # Download the Kernel tarfile
-        urlretrieve(downloadURL, f"linux-{kernelVersionNumber}.tar.xz")
+        sourceFilePath: Final[str] = self._downloadSourceFiles(
+            downloadURL, package.getPackageURLs().getSourceType()
+        )
 
         # Log
         currentLogCount = logging.log(
@@ -138,10 +129,8 @@ class PrepareBuildFunctions:
             "Extracting Linux Kernel...",
         )
 
-        # Extract the Kernel
-        kernelTarFile: tarfile.TarFile = tarfile.open(
-            f"linux-{kernelVersionNumber}.tar.xz"
-        )
+        # Extract the Linux Kernel
+        kernelTarFile: tarfile.TarFile = tarfile.open(sourceFilePath)
         kernelTarFile.extractall(".")
         kernelTarFile.close()
 
@@ -186,7 +175,7 @@ class PrepareBuildFunctions:
         )
 
         # Switch directories
-        os.chdir(rootDirectory)
+        os.chdir(directories[0])
 
         # Copy the new configuration file to the Linux PKGBUILD directory
         subprocess.call(
@@ -195,42 +184,27 @@ class PrepareBuildFunctions:
                 "--recursive",
                 "--update",
                 "--verbose",
-                f"{preparationDirectory}/linux-{kernelVersionNumber}/.config",
+                f"{directories[1]}/linux-{kernelVersionNumber}/.config",
                 f"{package.getPackagePaths().getPackageBuildPath()}/config",
             ]
         )
 
-        # Generate new checksums
-        newCheckSums: str = "{x} SKIP {x}"
-        kernelTarFileCheckSum: str = ""
-        kernelConfigurationFileChecksum: str = ""
-
-        # Kernel checksum
-        with open(
-            f"{preparationDirectory}/linux-{kernelVersionNumber}.tar.xz", "rb"
-        ) as kernelTarFile:
-            kernelTarFileCheckSum = hashlib.sha256(kernelTarFile.read()).hexdigest()
-            kernelTarFile.close()
-
-        # Kernel configuration file checksum
-        with open(
-            f"{preparationDirectory}/linux-{kernelVersionNumber}/.config", "rb"
-        ) as kerneConfigurationFile:
-            kernelConfigurationFileChecksum = hashlib.sha256(
-                kerneConfigurationFile.read()
-            ).hexdigest()
-            kerneConfigurationFile.close()
-
-        # Edit the PKGBUILD
-        self._pkgbuildModifyVersionKey(
-            f"{package.getPackageVersion()}.aarch64",
-            package.getPackagePaths().getPackageBuildPath(),
+        # Generate new SHA256 checksums
+        newSHA256Checksums: Final[str] = self._generateSHA256Checksums(
+            "{X} SKIP {X}",
+            f"{directories[1]}/linux-{kernelVersionNumber}.tar.xz",
+            f"{directories[1]}/linux-{kernelVersionNumber}/.config",
         )
-        self._pkgbuildModifySha256CheckSumKey(
-            newCheckSums.replace("{x}", kernelTarFileCheckSum, 1).replace(
-                "{x}", kernelConfigurationFileChecksum, 1
-            ),
+
+        # Modify the PKGBUILD version entry
+        self._modifyVersionPKGBUILDEntry(
             package.getPackagePaths().getPackageBuildPath(),
+            f"{kernelVersionNumber}.aarch64",
+        )
+
+        # Modify the PKGBUILD sha256 entry
+        self._modifySHA256PKGBUILDEntry(
+            package.getPackagePaths().getPackageBuildPath(), newSHA256Checksums
         )
 
         # Log
@@ -242,8 +216,8 @@ class PrepareBuildFunctions:
             "Cleaning up...",
         )
 
-        # Delete the preparation directory
-        subprocess.call(["rm", "--recursive", "--force", preparationDirectory])
+        # Delete the temporary directory
+        subprocess.call(["rm", "--recursive", "--force", directories[1]])
 
         # Log
         currentLogCount = logging.log(
@@ -255,33 +229,111 @@ class PrepareBuildFunctions:
         )
 
     # Private Methods
-    def _pkgbuildModifyVersionKey(self, newVersion: str, path: str) -> None:
+    def _createTemporaryDirectory(self) -> tuple(str, str):
         """
-        Modifies the given PKGBUILD's version entry
+        Creates a new, temporary directory, for package preparation.
 
-        @param { str } newVersion - The new version of the package
-        @param { str } path - The path to the PKGBUILD's directory
+        @return tuple(str, str) - Old directory path, Temporary directory path
+        """
+        # Get current directory
+        currentOldDirectory: Final[str] = os.getcwd()
+
+        # Temporary directory name
+        temporaryDirectory: Final[str] = "./temp"
+
+        # Create temporary directory
+        os.mkdir(temporaryDirectory)
+
+        # Switch directories
+        os.chdir(temporaryDirectory)
+
+        # Return
+        return (currentOldDirectory, os.getcwd())
+
+    def _downloadSourceFiles(self, downloadURL: str, urlType: str) -> str:
+        """
+        Downloads the given source file(s) via `https` or `git+https`.
+
+        @param { str } downloadURL - The download URL
+        @param { str } urlType - The type of the download URL
+        @return str - Filepath to the source download
+        """
+        # Import Statements
+        from subprocess import call
+        from urllib.request import urlretrieve
+
+        # HTTP(S) download
+        if urlType == "http":
+            # Download
+            return urlretrieve(downloadURL)[0]
+
+        # Git download
+        elif urlType == "git+http":
+            # Git clone
+            call(["git", "clone", downloadURL])
+
+        # Invalid params
+        else:
+            raise Exception("Invalid download URL or URL type")
+
+    def _generateSHA256Checksums(self, format: str, *files: str) -> str:
+        """
+        Generates SHA256 checksums based on the given files.
+
+        @param { str } format - Format string
+        @param { str } files - Filepaths to the given file(s)
+        @return str - The new generated checksums
+        """
+        # Import Statements
+        import hashlib
+
+        # Template
+        templateEntry: str = f"sha256sums=( {format} )"
+
+        # Iterate through each file and generate the checksum
+        for file in files:
+            with open(file, "rb") as file:
+                templateEntry = templateEntry.replace(
+                    "{X}", hashlib.sha256(file.read()).hexdigest(), 1
+                )
+                file.close()
+
+        # Return new checksums
+        return templateEntry
+
+    def _modifySHA256PKGBUILDEntry(self, directoryPath: str, value: str) -> None:
+        """
+        Modifies the given PKGBUILD's sha256 checksum entry.
+
+        @param { str } directoryPath - The path to the directory with the PKGBUILD
+        @param { str } value - The new checksum value
         @return None
         """
+        # Import Statements
+        from subprocess import call
+
         # Sed command
-        sedSyntax: Final[str] = f"s|^pkgver=.*|pkgver={newVersion}|g"
+        sedSyntax: Final[str] = f"s|^sha256sums=.*|{value}|g"
 
         # Execute sed
-        os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
+        call(["sed", "--in-place", sedSyntax, f"{directoryPath}/PKGBUILD"])
 
-    def _pkgbuildModifySha256CheckSumKey(self, newCheckSum: str, path: str) -> None:
+    def _modifyVersionPKGBUILDEntry(self, directoryPath: str, value: str) -> None:
         """
-        Modifies the given PKGBUILD's sha256 checksum entry
+        Modifies the given PKGBUILD's version entry.
 
-        @param { str } newCheckSum - The new checksum
-        @param { str } path - The path to the PKGBUILD's directory
+        @param { str } directoryPath - The path to the directory with the PKGBUILD
+        @param { str } value - The new version value
         @return None
         """
+        # Import Statements
+        from subprocess import call
+
         # Sed command
-        sedSyntax: Final[str] = f"s|^sha256sums=.*|sha256sums=( {newCheckSum} )|g"
+        sedSyntax: Final[str] = f"s|^pkgver=.*|pkgver={value}|g"
 
         # Execute sed
-        os.system(f"sed --in-place '{sedSyntax}' {path}/PKGBUILD")
+        call(["sed", "--in-place", sedSyntax, f"{directoryPath}/PKGBUILD"])
 
 class PrepareBuild:
     # Enums
@@ -301,7 +353,7 @@ class PrepareBuild:
     # Public Methods
     def preparePackage(self, package: db.PackageInfo) -> None:
         """
-        Runs the package's prepare package function
+        Runs the package's prepare package function.
 
         @param { PackageInfo } package - The package
         @return None
@@ -326,7 +378,7 @@ class PrepareBuild:
     # Private Methods
     def _isValidPrepareFunction(self, functionName: str) -> bool:
         """
-        Checks if a given prepare function is valid
+        Checks if a given prepare function is valid.
 
         @param { str } functionName - The name of the function
         @return bool - Is a valid prepare function

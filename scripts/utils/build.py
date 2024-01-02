@@ -56,7 +56,7 @@ class BuildFunctions:
     # Public Methods
     def build_pkg_linux(self, package: db.PackageInfo) -> None:
         """
-        Build function for linux package
+        Build function for the `linux-aarch64` package.
 
         @param { PackageInfo } package - The package
         @return None
@@ -117,7 +117,7 @@ class Build:
     # Public Methods
     def buildPackage(self, package: db.PackageInfo) -> None:
         """
-        Runs the package's build package function
+        Runs the package's build package function.
 
         @param { PackageInfo } package - The package
         @return None
@@ -142,7 +142,7 @@ class Build:
     # Private Methods
     def _isValidBuildFunction(self, functionName: str) -> bool:
         """
-        Checks if a given build function is valid
+        Checks if a given build function is valid.
 
         @param { str } functionName - The name of the function
         @return bool - Is a valid build function

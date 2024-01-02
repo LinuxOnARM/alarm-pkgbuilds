@@ -22,7 +22,7 @@
 # Public Methods
 def log(logTitle: str, packageName: str, currentLogValue: int, maximumLogCount: int, message: str) -> int:
     """
-    Prints a formatted message to the console
+    Prints a formatted message to the console.
 
     @param { str } logTitle - The title of the log
     @param { str } packageName - The name of the package

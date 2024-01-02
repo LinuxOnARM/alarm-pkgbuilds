@@ -39,9 +39,9 @@ class PackageURLInfo:
     # Public Methods
     def getSourceURL(self, replacementList: list[str] = None) -> str:
         """
-        Returns the URL of the package's source code
+        Returns the URL of the package's source code.
 
-        @param { list[str] } replacementList - A list of words to be used in internal .replace() call || Optional
+        @param { list[str] } replacementList - A string list to be used for formatting (Optional)
         @return str - The source URL
         """
         # No replacement list provided, return raw source url
@@ -60,7 +60,7 @@ class PackageURLInfo:
 
     def getSourceType(self) -> str:
         """
-        Returns the type of the source URL
+        Returns the type of the source URL.
 
         @return str - The source type
         """
@@ -68,7 +68,7 @@ class PackageURLInfo:
 
     def getUpstreamURL(self) -> str:
         """
-        Returns the URL of the package's upstream source
+        Returns the URL of the package's upstream source.
 
         @return str - The upstream URL
         """
@@ -96,7 +96,7 @@ class PackagePathInfo:
     # Public Methods
     def getPackageBuildPath(self) -> str:
         """
-        Returns the absolute path to the package's PKGBUILD directory
+        Returns the absolute path to the package's PKGBUILD directory.
 
         @return str - The absolute path to the package's PKGBUILD directory
         """
@@ -106,7 +106,7 @@ class PackagePathInfo:
 
     def getInternalRepositoryPath(self) -> str:
         """
-        Returns the absolute path to the package's repository directory
+        Returns the absolute path to the package's repository directory.
 
         @return str - The absolute path to the package's repository directory
         """
@@ -134,7 +134,7 @@ class PackageBuildInfo:
     # Public Methods
     def isMarkedForBuild(self) -> bool:
         """
-        Returns if the package is marked for build
+        Returns if the package is marked for build.
 
         @return bool - Build status
         """
@@ -142,7 +142,7 @@ class PackageBuildInfo:
 
     def getPackageBuildFunctionName(self) -> str:
         """
-        Returns the build function name of the package
+        Returns the build function name of the package.
 
         @return str - Build function name
         """
@@ -150,7 +150,7 @@ class PackageBuildInfo:
 
     def getPackagePrepareFunctionName(self) -> str:
         """
-        Returns the prepare function name of the package
+        Returns the prepare function name of the package.
 
         @return str - Prepare function name
         """
@@ -180,7 +180,7 @@ class PackageInfo:
     # Public Methods
     def getPackageVersion(self) -> str:
         """
-        Returns the version number of the package
+        Returns the version number of the package.
 
         @return str - Package's version number
         """
@@ -188,7 +188,7 @@ class PackageInfo:
 
     def getPackageURLs(self) -> PackageURLInfo:
         """
-        Returns the associated URL info of the package
+        Returns the associated URL info of the package.
 
         @return PackageURLInfo - See PackageURLInfo
         """
@@ -196,7 +196,7 @@ class PackageInfo:
 
     def getPackagePaths(self) -> PackagePathInfo:
         """
-        Returns the associated filepath info of the package
+        Returns the associated filepath info of the package.
 
         @return PackagePathInfo - See PackagePathInfo
         """
@@ -204,7 +204,7 @@ class PackageInfo:
 
     def getPackageBuildInfo(self) -> PackageBuildInfo:
         """
-        Returns the associated build info of the package
+        Returns the associated build info of the package.
 
         @return PackageBuildInfo - See PackageBuildInfo
         """
@@ -212,7 +212,7 @@ class PackageInfo:
 
     def getPackageName(self) -> str:
         """
-        Returns the name of the package
+        Returns the name of the package.
 
         @return str - Name of the package
         """
@@ -269,7 +269,7 @@ class Database:
     # Public Methods
     def getPackage(self, packageName: str) -> PackageInfo:
         """
-        Retrieves the given package information from the database
+        Retrieves the given package information from the database.
 
         @param { str } packageName - The name of the package
         @return PackageInfo - See PackageInfo
@@ -290,7 +290,7 @@ class Database:
 
     def getAllPackages(self) -> list[PackageInfo]:
         """
-        Returns a list with all available packages
+        Returns a list with all available packages.
 
         @return list[Package] - A list of all available packages
         """
@@ -312,7 +312,7 @@ class Database:
 
     def modifyPackage(self, packageName: str, keyPath: str, newValue: str) -> None:
         """
-        Modifies a given package's information on the database
+        Modifies a given package's information on the database.
 
         @param { str } packageName - The name of the package
         @param { str } keyPath - The key to modify
@@ -349,7 +349,7 @@ class Database:
 
     def addPackage(self, packageName: str, packageVersion: str, packageURLType: str, packageSourceURL: str, packageUpstreamURL: str, packageRepo: str, packagePackageBuild: str) -> None:
         """
-        Adds a new package to the package database
+        Adds a new package to the package database.
 
         @param { str } packageName - The name of the package
         @param { str } packageVersion -  The version of the package
@@ -395,7 +395,7 @@ class Database:
 
     def deletePackage(self, packageName: str) -> None:
         """
-        Deletes a given package from the database
+        Deletes a given package from the database.
 
         @param { str } packageName - The name of the package
         @return None
