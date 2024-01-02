@@ -87,7 +87,7 @@ class PrepareBuildFunctions:
         )
 
         # Create temporary directory
-        directories: Final[tuple(str, str)] = self._createTemporaryDirectory()
+        directories: Final[tuple[str, str]] = self._createTemporaryDirectory()
 
         # Retrieve Kernel version info
         kernelVersionNumber: str = package.getPackageVersion()
@@ -192,7 +192,7 @@ class PrepareBuildFunctions:
         # Generate new SHA256 checksums
         newSHA256Checksums: Final[str] = self._generateSHA256Checksums(
             "{X} SKIP {X}",
-            f"{directories[1]}/linux-{kernelVersionNumber}.tar.xz",
+            sourceFilePath,
             f"{directories[1]}/linux-{kernelVersionNumber}/.config",
         )
 
@@ -229,7 +229,7 @@ class PrepareBuildFunctions:
         )
 
     # Private Methods
-    def _createTemporaryDirectory(self) -> tuple(str, str):
+    def _createTemporaryDirectory(self) -> tuple[str, str]:
         """
         Creates a new, temporary directory, for package preparation.
 
