@@ -9,7 +9,7 @@
         "upstream_url": "https://archlinux.org/packages/core/x86_64/linux/"
       },
       "paths": {
-        "repo": "/aarch64/core/os/linux-aarch64",
+        "repo": "/packages/core/os/aarch64/linux-aarch64",
         "pkgbuild": "/pkgbuild/linux-aarch64"
       },
       "buildInfo": {
