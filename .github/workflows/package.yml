@@ -46,7 +46,7 @@ jobs:
         working-directory: ./scripts
         run: |
           apt-get update
-          apt-get install --assume-yes python3 python3-pip
+          apt-get install --assume-yes python3 python3-pip git
           pip3 install --break-system-packages --requirement ./requirements.txt
 
       # Run sync_package_database.py
@@ -89,7 +89,7 @@ jobs:
       - name: 🐍 Setting-up Python 🐍
         working-directory: ./scripts
         run: |
-          pacman --sync --sysupgrade --refresh --noconfirm python python-pip
+          pacman --sync --sysupgrade --refresh --noconfirm python python-pip git
           pip3 install --break-system-packages --requirement ./requirements.txt
 
       # Add and Configure GPG Key
@@ -115,8 +115,8 @@ jobs:
       # Commit the new packages
       - name: 🚀 Committing The New Packages To The Repository 🚀
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name LinuxOnARM-AutomatedPackagingSystem
+          git config user.email 146043018+MaxineToTheStars@users.noreply.github.com
           git add .
           git commit -m "[Automated Packaging System] Upload of new Packages"
           git push

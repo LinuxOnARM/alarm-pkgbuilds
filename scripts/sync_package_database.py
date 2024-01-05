@@ -82,11 +82,6 @@ def main() -> None:
             .decode(None, "utf-8")
         )
 
-        # Check if a string was returned
-        if pkgVersionRaw == None or not pkgVersionRaw is str:
-            # Move on to the next package
-            continue
-
         # Clean the version data
         pkgVersionClean: str = _cleanVersionString(pkgVersionRaw)
 
