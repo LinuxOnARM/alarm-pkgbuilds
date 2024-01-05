@@ -52,7 +52,7 @@ jobs:
       # Run sync_package_database.py
       - name: 🏃 Running Synchronization Script 🏃
         working-directory: ./scripts
-        run: python ./sync_package_database.py
+        run: python3 ./sync_package_database.py
 
       # Commit the new Database
       - name: 🚀 Committing The New Database To The Repository 🚀
