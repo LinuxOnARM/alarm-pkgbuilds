@@ -41,25 +41,12 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
-      # Setup QEMU User Static for interop support
-      - name: 💻 Setting-up QEMU User Static 💻
-        run: |
-          apt-get update
-          apt-get install --assume-yes qemu-user-static lsb-release
-
-      # Setup Python
-      - name: 🐍 Setting-up Python v3.10 🐍
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10.0"
-          architecture: x64
-
       # Switch directories
       - name: 🔀 Switching To Scripts Directory 🔀
         run: cd ./scripts
 
-      # Install Python requirements/dependencies
-      - name: 📲 Installing Python Requirements/Dependencies 📲
+      # Setup Python
+      - name: 🐍 Setting-up Python 🐍
         run: pip3 install -r requirements.txt
 
       # Run sync_package_database.py
@@ -69,8 +56,8 @@ jobs:
       # Commit the new Database
       - name: 🚀 Committing The New Database To The Repository 🚀
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name LinuxOnARM-Project-AutomatedPackagingSystem
+          git config user.email 146043018+MaxineToTheStars@users.noreply.github.com
           git add .
           git commit -m "[Automated Packaging System] Updated Package Database"
           git push
@@ -97,26 +84,15 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
-      # Setup QEMU User Static for interop support
-      - name: 💻 Setting-up QEMU User Static 💻
-        run: |
-          apt-get update
-          apt-get install --assume-yes qemu-user-static
-
-      # Setup Python
-      - name: 🐍 Setting-up Python v3.10 🐍
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10.0"
-          architecture: x64
-
       # Switch directories
       - name: 🔀 Switching To Scripts Directory 🔀
         run: cd ./scripts
 
-      # Install Python requirements/dependencies
-      - name: 📲 Installing Python Requirements/Dependencies 📲
-        run: pip3 install -r requirements.txt
+      # Setup Python
+      - name: 🐍 Setting-up Python 🐍
+        run: |
+          pacman --sync --sysupgrade --refresh --noconfirm python python-pip
+          pip3 install -r requirements.txt
 
       # Add and Configure GPG Key
       - name: 🔐 Adding And Configuring GPG Key 🔐
@@ -130,11 +106,11 @@ jobs:
 
       # Run prepare_packages.py
       - name: 🛠️ Preparing Packages 🛠️
-        run: pip3 ./prepare_packages.py
+        run: python3 ./prepare_packages.py
 
       # Run build_packages.py
       - name: 📦 Building Packages 📦
-        run: pip3 ./build_packages.py
+        run: python3 ./build_packages.py
 
       # Commit the new packages
       - name: 🚀 Committing The New Packages To The Repository 🚀
