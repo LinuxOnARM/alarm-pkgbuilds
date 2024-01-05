@@ -51,7 +51,7 @@ jobs:
       - name: 🐍 Setting-up Python v3.10 🐍
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.10.0"
           architecture: x64
 
       # Switch directories
@@ -107,7 +107,7 @@ jobs:
       - name: 🐍 Setting-up Python v3.10 🐍
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.10.0"
           architecture: x64
 
       # Switch directories
@@ -122,15 +122,11 @@ jobs:
       - name: 🔐 Adding And Configuring GPG Key 🔐
         run: |
           echo "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
-          sudo pacman-key --add ./key.gpg
-          sudo pacman-key --lsign-key ./key.gpg
-          sudo sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
-          sudo sed --in-place "s|^#GPGKEY=.*|GPGKEY=\"503F278965C391CC\"|g" /etc/makepkg.conf
-
-      # Install development dependencies
-      - name: Installing Development Dependencies
-        run: |
-          sudo pacman --sync --refresh --sysupgrade --noconfirm base-devel
+          pacman-key --init
+          pacman-key --add ./key.gpg
+          pacman-key --lsign-key ./key.gpg
+          sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
+          sed --in-place "s|^#GPGKEY=.*|GPGKEY=\"503F278965C391CC\"|g" /etc/makepkg.conf
 
       # Run prepare_packages.py
       - name: 🛠️ Preparing Packages 🛠️

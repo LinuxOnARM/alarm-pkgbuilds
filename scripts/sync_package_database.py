@@ -52,6 +52,11 @@ def main() -> None:
 
     # Iterate through all packages
     for package in allPackages:
+        # Check for the example package
+        if package.getPackageName() == "example-package":
+            # Skip the example package
+            continue
+
         # Log
         currentLogCount = logging.log(
             "PACKAGE SYNC",
