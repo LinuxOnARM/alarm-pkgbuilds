@@ -96,6 +96,15 @@ jobs:
       - name: 📲 Installing Python Requirements/Dependencies 📲
         run: pip3 install -r requirements.txt
 
+      # Add and Configure GPG Key
+      - name: 🔐 Adding And Configuring GPG Key 🔐
+        run: |
+          echo "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
+          pacman-key --add ./key.gpg
+          pacman-key --lsign-key ./key.gpg
+          sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
+          sed --in-place "s|^#GPGKEY=.*|GPGKEY=\"503F278965C391CC\"|g" /etc/makepkg.conf
+
       # Run prepare_packages.py
       - name: 🛠️ Preparing Packages 🛠️
         run: pip3 ./prepare_packages.py
