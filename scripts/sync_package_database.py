@@ -137,13 +137,13 @@ def _cleanVersionString(rawVersionString: str) -> str:
     @return str - A clean version string
     """
     # Output
-    out: str = ""
+    outCleanVersionString: str = ""
 
     # Parse with RegEx
     compiledPattern: re.Pattern = re.compile(
         FIND_VERSION_ENTRY_REGEX_PATTERN, re.IGNORECASE
     )
-    out = (
+    outCleanVersionString = (
         compiledPattern.findall(rawVersionString)[0]
         .replace('content="', "")
         .replace('"', "")
@@ -151,10 +151,10 @@ def _cleanVersionString(rawVersionString: str) -> str:
 
     # Remove filtered words
     for word in FILTERED_WORDS:
-        out = out.replace(word, "")
+        outCleanVersionString = outCleanVersionString.replace(word, "")
 
     # Return
-    return out
+    return outCleanVersionString
 
 # Run
 if __name__ == "__main__":

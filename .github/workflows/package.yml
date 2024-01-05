@@ -1,39 +1,39 @@
 # Workflow Information
 # ------------
-# Synchronizes, prepares, builds, and publishes packages.
+# LinuxOnARM Automated Packaging System.
 #
 # Maintainer: MaxineToTheStars <https://github.com/MaxineToTheStars>
 # ------------------------------------------------------------------
 
 # Name of the Workflow
-name: Package and Publish
+name: LinuxOnARM Automated Packaging System
 
 # Name of the Workflow while running
-run-name: package-and-publish
+run-name: linuxonarm-aps
 
 # Workflow triggers
 on:
-  # Workflow triggered every Sunday at midnight
+  # Scheduled cron job || Triggered every Sunday at 12:00 AM
   schedule:
     - cron: "0 0 * * 0"
 
-  # Allow for manual triggers for testing/development
+  # Allow for manual triggers of the Workflow
   workflow_dispatch:
 
 # Jobs
 jobs:
-  # Synchronize the packages first
-  synchronize_packages:
+  # Synchronize the package database
+  synchronize_package_database:
     # Run on locally hosted AArch64 runner
     runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
-    name: Synchronize Package Database
+    name: Synchronize Package Databases
 
-    # Container setup
+    # Container Setup
     container:
-      image: ubuntu:focal
-      options: --cpus 3
+      image: ubuntu:lunar
+      options: --cpus 4
 
     # Steps
     steps:
@@ -54,16 +54,16 @@ jobs:
         working-directory: ./scripts
         run: python3 ./sync_package_database.py
 
-      # Commit the new Database
+      # Commit the new database to the repository
       - name: 🚀 Committing The New Database To The Repository 🚀
         run: |
-          git config user.name LinuxOnARM-Project-AutomatedPackagingSystem
+          git config user.name LinuxOnARM-AutomatedPackagingSystem
           git config user.email 146043018+MaxineToTheStars@users.noreply.github.com
           git add .
           git commit -m "[Automated Packaging System] Updated Package Database"
           git push
 
-  # Prepare and Build packages
+  # Prepare and build packages
   prepare_and_build_packages:
     # Run on locally hosted AArch64 runner
     runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
@@ -71,13 +71,13 @@ jobs:
     # Job name
     name: Prepare and Build Packages
 
-    # Requires for the Synchronization job to finish
-    needs: [synchronize_packages]
-
-    # Container setup
+    # Container Setup
     container:
       image: menci/archlinuxarm:base-devel
-      options: --cpus 3
+      options: --cpus 4
+
+    # Requires for the Synchronization job to finish
+    needs: [synchronize_package_database]
 
     # Steps
     steps:
@@ -121,28 +121,28 @@ jobs:
           git commit -m "[Automated Packaging System] Upload of new Packages"
           git push
 
-  # Publish packages
+  # Publish packages to GitHub pages
   publish_packages:
     # Run on locally hosted AArch64 runner
     runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
-    name: Prepare and Build Packages
+    name: Publish Packages to GitHub Pages
 
-    # Requires for the Synchronization job and Prepare and Build job to finish
-    needs: [synchronize_packages, prepare_and_build_packages]
-
-    # Container setup
+    # Container Setup
     container:
-      image: ubuntu:focal
-      options: --cpus 3
+      image: ubuntu:lunar
+      options: --cpus 4
 
     # Set permissions
     permissions:
       pages: write
       contents: write
 
-    # Steps
+    # Requires for the Synchronization job and Prepare/Build job to finish
+    needs: [synchronize_package_database, prepare_and_build_packages]
+
+    # Steps:
     steps:
       # Clone the repository
       - name: 📩 Cloning Repository 📩
