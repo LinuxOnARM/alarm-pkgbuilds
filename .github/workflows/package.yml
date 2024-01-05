@@ -36,11 +36,16 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
+      # Setup QEMU User Static for interop support
+      - name: 💻 Setting-up QEMU User Static 💻
+        uses: docker/setup-qemu-action@v3
+
       # Setup Python
       - name: 🐍 Setting-up Python v3.10 🐍
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: 3.10
+          architecture: x64
 
       # Switch directories
       - name: 🔀 Switching To Scripts Directory 🔀
@@ -85,11 +90,16 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
+      # Setup QEMU User Static for interop support
+      - name: 💻 Setting-up QEMU User Static 💻
+        uses: docker/setup-qemu-action@v3
+
       # Setup Python
       - name: 🐍 Setting-up Python v3.10 🐍
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: 3.10
+          architecture: x64
 
       # Switch directories
       - name: 🔀 Switching To Scripts Directory 🔀
