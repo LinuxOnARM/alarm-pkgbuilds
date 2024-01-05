@@ -32,7 +32,7 @@ jobs:
 
     # Container setup
     container:
-      image: debian:trixie-slim
+      image: ubuntu:focal
       options: --cpus 3
 
     # Steps
@@ -45,7 +45,7 @@ jobs:
       - name: 💻 Setting-up QEMU User Static 💻
         run: |
           apt-get update
-          apt-get install --assume-yes qemu-user-static
+          apt-get install --assume-yes qemu-user-static lsb-release
 
       # Setup Python
       - name: 🐍 Setting-up Python v3.10 🐍
@@ -158,7 +158,7 @@ jobs:
 
     # Container setup
     container:
-      image: debian:trixie-slim
+      image: ubuntu:focal
       options: --cpus 3
 
     # Set permissions
