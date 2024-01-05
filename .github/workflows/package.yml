@@ -41,22 +41,9 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
-      - name: Debug
-        run: |
-          echo $PWD
-          ls -a
-
-      # Switch directories
-      - name: 🔀 Switching To Scripts Directory 🔀
-        run: cd ./scripts
-
-      - name: Debug
-        run: |
-          echo $PWD
-          ls -a
-
       # Setup Python
       - name: 🐍 Setting-up Python 🐍
+        working-directory: ./scripts
         run: |
           apt-get update
           apt-get install --assume-yes python3 python3-pip
@@ -64,6 +51,7 @@ jobs:
 
       # Run sync_package_database.py
       - name: 🏃 Running Synchronization Script 🏃
+        working-directory: ./scripts
         run: python ./sync_package_database.py
 
       # Commit the new Database
@@ -97,12 +85,9 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
-      # Switch directories
-      - name: 🔀 Switching To Scripts Directory 🔀
-        run: cd ./scripts
-
       # Setup Python
       - name: 🐍 Setting-up Python 🐍
+        working-directory: ./scripts
         run: |
           pacman --sync --sysupgrade --refresh --noconfirm python python-pip
           pip3 install -r ./requirements.txt
@@ -119,10 +104,12 @@ jobs:
 
       # Run prepare_packages.py
       - name: 🛠️ Preparing Packages 🛠️
+        working-directory: ./scripts
         run: python3 ./prepare_packages.py
 
       # Run build_packages.py
       - name: 📦 Building Packages 📦
+        working-directory: ./scripts
         run: python3 ./build_packages.py
 
       # Commit the new packages
