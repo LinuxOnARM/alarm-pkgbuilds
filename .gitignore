@@ -1,5 +1,6 @@
 # Python
 .env
+scripts/utils/__pycache__/
 
 # Micorosft VSCode
 .vscode
