@@ -45,6 +45,11 @@ jobs:
       - name: 🔀 Switching To Scripts Directory 🔀
         run: cd ./scripts
 
+      - name: Debug
+        run: |
+          echo $PWD
+          ls -a
+
       # Setup Python
       - name: 🐍 Setting-up Python 🐍
         run: |
