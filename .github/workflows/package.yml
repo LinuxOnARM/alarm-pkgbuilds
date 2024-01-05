@@ -28,7 +28,7 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
-    name: Synchronize Package Databases
+    name: Synchronize Package Database
 
     # Container Setup
     container:
