@@ -30,6 +30,11 @@ jobs:
     # Job name
     name: Synchronize Package Database
 
+    # Container setup
+    container:
+      image: debian:trixie-slim
+      options: --cpus 3
+
     # Steps
     steps:
       # Clone the repository
@@ -82,7 +87,7 @@ jobs:
     # Container setup
     container:
       image: menci/archlinuxarm:base-devel
-      options: --cpus 2
+      options: --cpus 3
 
     # Steps
     steps:
@@ -113,10 +118,15 @@ jobs:
       - name: 🔐 Adding And Configuring GPG Key 🔐
         run: |
           echo "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
-          pacman-key --add ./key.gpg
-          pacman-key --lsign-key ./key.gpg
-          sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
-          sed --in-place "s|^#GPGKEY=.*|GPGKEY=\"503F278965C391CC\"|g" /etc/makepkg.conf
+          sudo pacman-key --add ./key.gpg
+          sudo pacman-key --lsign-key ./key.gpg
+          sudo sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
+          sudo sed --in-place "s|^#GPGKEY=.*|GPGKEY=\"503F278965C391CC\"|g" /etc/makepkg.conf
+
+      # Install development dependencies
+      - name: Installing Development Dependencies
+        run: |
+          sudo pacman --sync --refresh --sysupgrade --noconfirm base-devel
 
       # Run prepare_packages.py
       - name: 🛠️ Preparing Packages 🛠️
@@ -146,6 +156,11 @@ jobs:
     # Requires for the Synchronization job and Prepare and Build job to finish
     needs: [synchronize_packages, prepare_and_build_packages]
 
+    # Container setup
+    container:
+      image: debian:trixie-slim
+      options: --cpus 3
+
     # Set permissions
     permissions:
       pages: write
@@ -153,6 +168,10 @@ jobs:
 
     # Steps
     steps:
+      # Clone the repository
+      - name: 📩 Cloning Repository 📩
+        uses: actions/checkout@v4
+
       # Deploy to GitHub pages
       - name: 🚀 Deploying To GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
