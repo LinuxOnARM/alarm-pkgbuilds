@@ -25,7 +25,7 @@ jobs:
   # Synchronize the packages first
   synchronize_packages:
     # Run on locally hosted AArch64 runner
-    runs-on: local-rpi-aarch64-1
+    runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
     name: Synchronize Package Database
@@ -66,7 +66,7 @@ jobs:
   # Prepare and Build packages
   prepare_and_build_packages:
     # Run on locally hosted AArch64 runner
-    runs-on: local-rpi-aarch64-1
+    runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
     name: Prepare and Build Packages
@@ -128,7 +128,7 @@ jobs:
   # Publish packages
   publish_packages:
     # Run on locally hosted AArch64 runner
-    runs-on: local-rpi-aarch64-1
+    runs-on: [self-hosted, Linux, ARM64, local-rpi-aarch64-1]
 
     # Job name
     name: Prepare and Build Packages
