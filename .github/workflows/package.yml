@@ -50,7 +50,7 @@ jobs:
         run: |
           apt-get update
           apt-get install --assume-yes python3 python3-pip
-          pip3 install -r requirements.txt
+          pip3 install -r ./requirements.txt
 
       # Run sync_package_database.py
       - name: 🏃 Running Synchronization Script 🏃
@@ -95,7 +95,7 @@ jobs:
       - name: 🐍 Setting-up Python 🐍
         run: |
           pacman --sync --sysupgrade --refresh --noconfirm python python-pip
-          pip3 install -r requirements.txt
+          pip3 install -r ./requirements.txt
 
       # Add and Configure GPG Key
       - name: 🔐 Adding And Configuring GPG Key 🔐
