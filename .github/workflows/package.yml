@@ -99,7 +99,7 @@ jobs:
       # Download runtime dependencies
       - name: ☄️ Downloading Runtime Dependencies ☄️
         run: |
-          pacman --sync --sysupgrade --refresh --noconfirm git
+          pacman --sync --sysupgrade --refresh --noconfirm git archlinux-keyring
 
       # Clone the repository
       - name: 📩 Cloning Repository 📩
