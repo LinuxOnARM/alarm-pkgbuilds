@@ -44,8 +44,8 @@ jobs:
       # Setup QEMU User Static for interop support
       - name: 💻 Setting-up QEMU User Static 💻
         run: |
-          sudo apt-get update
-          sudo apt-get install --assume-yes qemu-user-static
+          apt-get update
+          apt-get install --assume-yes qemu-user-static
 
       # Setup Python
       - name: 🐍 Setting-up Python v3.10 🐍
@@ -100,8 +100,8 @@ jobs:
       # Setup QEMU User Static for interop support
       - name: 💻 Setting-up QEMU User Static 💻
         run: |
-          sudo apt-get update
-          sudo apt-get install --assume-yes qemu-user-static
+          apt-get update
+          apt-get install --assume-yes qemu-user-static
 
       # Setup Python
       - name: 🐍 Setting-up Python v3.10 🐍
