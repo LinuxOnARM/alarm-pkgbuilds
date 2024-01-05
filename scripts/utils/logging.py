@@ -3,7 +3,7 @@
 # File Docstring
 # @LinuxOnARM || logging.py
 # ---------------------------------------
-# Provides a simple to use logging system
+# Provides a simple to use logging system.
 #
 # Authors: @MaxineToTheStars <https://github.com/MaxineToTheStars>
 #          @LinuxOnARM       <https://github.com/LinuxOnARM>

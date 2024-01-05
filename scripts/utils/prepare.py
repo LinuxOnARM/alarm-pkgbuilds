@@ -55,6 +55,34 @@ class PrepareBuildFunctions:
         return
 
     # Public Methods
+    def prepare_pkg_example_package(self, package: db.PackageInfo) -> None:
+        """
+        Preparation function for the `example-package` package.
+
+        @param { PackageInfo } package - The package
+        @return
+        """
+        # Setup logging
+        maximumLogCount: Final[int] = 2
+        currentLogCount: int = 1
+
+        # Log
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Starting package preparations...",
+        )
+
+        currentLogCount = logging.log(
+            "PREPARE",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Done!",
+        )
+
     def prepare_pkg_linux(self, package: db.PackageInfo) -> None:
         """
         Preparation function for the `linux-aarch64` package.

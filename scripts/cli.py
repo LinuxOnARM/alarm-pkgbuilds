@@ -107,7 +107,7 @@ class Functions:
         # Check if inputs are passed
         if len(inputs) == 0 or inputs[0] == "":
             # Handle case
-            return "Missing parameters: { str } packageName - The name of the package\n { str } packageVersion - The version of the package\n  { str } packageURLType - The URL type of the package's source\n { str } packageSourceURL - The URL of the package's source\n    { str } packageUpstreamURL - The URL of the package's upstream source\n    { str } packageRepository - Which repository is the package under"
+            return "Missing parameters:\n   { str } packageName - The name of the package\n   { str } packageVersion - The version of the package\n   { str } packageURLType - The URL type of the package's source\n   { str } packageSourceURL - The URL of the package's source\n   { str } packageUpstreamURL - The URL of the package's upstream source\n   { str } packageRepository - Which repository is the package under"
 
         # Get the necessary inputs
         packageName: Final[str] = inputs[0]
@@ -131,9 +131,7 @@ class Functions:
         call(["mkdir", "--parents", pkgbuildPath])
 
         # PKGBUILD Template
-        pkgbuildTemplate: Final[
-            str
-        ] = f"# Package Info\n# ------------\n# PKGBUILD for {packageName} package\n#\n# Maintainer: YourName <example@email.com>\n# ------------------------------------------------------------------\n"
+        pkgbuildTemplate: Final[str] = f"# Package Information\n# ------------\n# PKGBUILD for {packageName} package\n#\n# Maintainer: Your Name <example@email.com>\n# ------------------------------------------------------------------\n"
 
         # Generate PKGBUILD
         pkgbuildFile = open(f"{pkgbuildPath}/PKGBUILD", "a+")
@@ -157,7 +155,7 @@ class Functions:
             )
         except Exception:
             # Handle exception
-            return "Function error: ???"
+            return "Function error: Database error"
 
         # Print out information
         self.get([packageName])
@@ -172,6 +170,9 @@ class Functions:
         @param { str } packageName - The name of the package in the database
         @return str - Package info
         """
+        # Import Statements
+        from subprocess import call
+
         # Check if inputs are passed
         if len(inputs) == 0 or inputs[0] == "":
             # Handle case
@@ -180,13 +181,37 @@ class Functions:
         # Get the package name input
         packageName: Final[str] = inputs[0]
 
-        # Try to delete the package from the database
+        # Hold package data
+        packageData: db.PackageInfo = None
+
+        # Try to retrieve package data from database
         try:
-            # Delete the package
-            self._db.deletePackage(packageName)
+            # Retrieve package data
+            packageData = self._db.getPackage(packageName)
         except Exception:
             # Handle exception
             return "Function error: Package was not found"
+
+        # Delete the package's file entries
+        call(
+            [
+                "rm",
+                "--recursive",
+                "--force",
+                packageData.getPackagePaths().getPackageBuildPath(),
+            ]
+        )
+        call(
+            [
+                "rm",
+                "--recursive",
+                "--force",
+                packageData.getPackagePaths().getInternalRepositoryPath(),
+            ]
+        )
+
+        # Delete the package from the database
+        self._db.deletePackage(packageName)
 
         # Log
         print(f'Package "{packageName}" was deleted!')

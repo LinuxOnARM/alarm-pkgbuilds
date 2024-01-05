@@ -1,0 +1,37 @@
+# Package Information
+# ------------
+# PKGBUILD for example-package package
+#
+# Maintainer: MaxineToTheStars <https://github.com/MaxineToTheStars>
+# ------------------------------------------------------------------
+
+# Package Name
+pkgname="example"
+
+# Package Version
+pkgver="1.0.0"
+
+# Package Release Number
+pkgver="1"
+
+# Package Description
+pkgdesc="An example package"
+
+# Package Architectures
+arch=( "any" )
+
+# Package License
+license=( "custom" )
+
+# Package Sources
+source=( "example.sh" )
+
+# Package Checksums
+sha512sums=( "SKIP" )
+
+package() {
+    echo 'Hello World!' > "${srcdir}/example.sh"
+    mkdir -p "${pkgdir}/usr/bin"
+    cp "${srcdir}/example.sh" "${pkgdir}/usr/bin/example-package"
+    chmod +x "${pkgdir}/usr/bin/example-package"
+}

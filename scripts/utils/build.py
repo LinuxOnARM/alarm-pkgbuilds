@@ -54,19 +54,19 @@ class BuildFunctions:
         return
 
     # Public Methods
-    def build_pkg_linux(self, package: db.PackageInfo) -> None:
+    def build_pkg_example_package(self, package: db.PackageInfo) -> None:
         """
-        Build function for the `linux-aarch64` package.
+        Build function for the `example-package` package.
 
         @param { PackageInfo } package - The package
-        @return None
+        @return
         """
         # Import statements
         import os
         import subprocess
 
         # Setup logging
-        maximumLogCount: Final[int] = 11
+        maximumLogCount: Final[int] = 4
         currentLogCount: int = 1
 
         # Log
@@ -96,8 +96,58 @@ class BuildFunctions:
             package.getPackageName(),
             currentLogCount,
             maximumLogCount,
+            "Done building...",
+        )
+
+        currentLogCount = logging.log(
+            "BUILD",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
+            "Moving packages...",
+        )
+
+        # Copy packages over
+        subprocess.call(
+            [
+                "cp",
+                "--recursive",
+                "--update",
+                "--verbose",
+                "--parents",
+                f"{package.getPackagePaths().getPackageBuildPath()}/*.pkg.tar.zst",
+                package.getPackagePaths().getInternalRepositoryPath(),
+            ]
+        )
+        subprocess.call(
+            [
+                "cp",
+                "--recursive",
+                "--update",
+                "--verbose",
+                "--parents",
+                f"{package.getPackagePaths().getPackageBuildPath()}/*.pkg.tar.zst.sig",
+                package.getPackagePaths().getInternalRepositoryPath(),
+            ]
+        )
+
+        # Log
+        currentLogCount = logging.log(
+            "BUILD",
+            package.getPackageName(),
+            currentLogCount,
+            maximumLogCount,
             "Done!",
         )
+
+    def build_pkg_linux(self, package: db.PackageInfo) -> None:
+        """
+        Build function for the `linux-aarch64` package.
+
+        @param { PackageInfo } package - The package
+        @return None
+        """
+        return
 
 class Build:
     # Enums

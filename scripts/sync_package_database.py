@@ -3,6 +3,7 @@
 import re
 from typing import Final
 from urllib import request
+from subprocess import call
 
 # Second party
 import utils.db as db
@@ -45,6 +46,9 @@ def main() -> None:
     # Setup logging
     maximumLogCount: Final[int] = len(allPackages) + 1
     currentLogCount: int = 1
+
+    # Create a backup of the current database file
+    call(["cp", "./db/db.json", "./db/db.old.json"])
 
     # Iterate through all packages
     for package in allPackages:
