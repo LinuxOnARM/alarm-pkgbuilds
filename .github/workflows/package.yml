@@ -37,6 +37,12 @@ jobs:
 
     # Steps
     steps:
+      # Download runtime dependencies
+      - name: ☄️ Downloading Runtime Dependencies ☄️
+        run: |
+          apt-get update
+          apt-get install --assume-yes git
+
       # Clone the repository
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
@@ -46,7 +52,7 @@ jobs:
         working-directory: ./scripts
         run: |
           apt-get update
-          apt-get install --assume-yes python3 python3-pip git
+          apt-get install --assume-yes python3 python3-pip
           pip3 install --break-system-packages --requirement ./requirements.txt
 
       # Run sync_package_database.py
@@ -81,6 +87,11 @@ jobs:
 
     # Steps
     steps:
+      # Download runtime dependencies
+      - name: ☄️ Downloading Runtime Dependencies ☄️
+        run: |
+          pacman --sync --sysupgrade --refresh --noconfirm git
+
       # Clone the repository
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
@@ -89,7 +100,7 @@ jobs:
       - name: 🐍 Setting-up Python 🐍
         working-directory: ./scripts
         run: |
-          pacman --sync --sysupgrade --refresh --noconfirm python python-pip git
+          pacman --sync --sysupgrade --refresh --noconfirm python python-pip
           pip3 install --break-system-packages --requirement ./requirements.txt
 
       # Add and Configure GPG Key
@@ -144,6 +155,12 @@ jobs:
 
     # Steps:
     steps:
+      # Download runtime dependencies
+      - name: ☄️ Downloading Runtime Dependencies ☄️
+        run: |
+          apt-get update
+          apt-get install --assume-yes git
+
       # Clone the repository
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4

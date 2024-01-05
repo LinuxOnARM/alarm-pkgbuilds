@@ -54,6 +54,15 @@ def main() -> None:
     for package in allPackages:
         # Check for the example package
         if package.getPackageName() == "example-package":
+            # Log
+            currentLogCount = logging.log(
+                "PACKAGE SYNC",
+                package.getPackageName(),
+                currentLogCount,
+                maximumLogCount,
+                "Skipping package || Example package",
+            )
+
             # Skip the example package
             continue
 
