@@ -41,6 +41,11 @@ jobs:
       - name: 📩 Cloning Repository 📩
         uses: actions/checkout@v4
 
+      - name: Debug
+        run: |
+          echo $PWD
+          ls -a
+
       # Switch directories
       - name: 🔀 Switching To Scripts Directory 🔀
         run: cd ./scripts
