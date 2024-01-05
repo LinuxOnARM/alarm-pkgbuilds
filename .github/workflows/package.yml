@@ -17,6 +17,9 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
+  # Allow for manual triggers for testing/development
+  workflow_dispatch:
+
 # Jobs
 jobs:
   # Synchronize the packages first
