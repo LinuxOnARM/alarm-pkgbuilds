@@ -117,6 +117,8 @@ jobs:
       - name: 🔐 Adding And Configuring GPG Key 🔐
         run: |
           echo "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
+          rm --recursive --force /etc/pacman.d/gnupg
+          pacman-key --init
           pacman-key --populate
           pacman-key --add ./key.gpg
           pacman-key --lsign-key ./key.gpg
