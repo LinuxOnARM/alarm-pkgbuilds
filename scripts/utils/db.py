@@ -368,6 +368,10 @@ class Database:
         if packageName in packageList:
             raise Exception("Duplicate package entry")
 
+        # Create function templates
+        buildPackageTemplate: str = f"build_pkg_{packageName}".replace("-", "_")
+        preparePackageTemplate: str = f"prepare_pkg_{packageName}".replace("-", "_")
+
         # Add new entry to packages array
         self._storedJSONDatabase["packages"].append(packageName)
 
@@ -383,8 +387,8 @@ class Database:
         self._storedJSONDatabase["package_info"][packageName]["paths"]["pkgbuild"] = packagePackageBuild
         self._storedJSONDatabase["package_info"][packageName]["buildInfo"] = {}
         self._storedJSONDatabase["package_info"][packageName]["buildInfo"]["markedForBuild"] = True
-        self._storedJSONDatabase["package_info"][packageName]["buildInfo"]["buildFunctionName"] = f"build_pkg_{packageName}".replace("-", "_")
-        self._storedJSONDatabase["package_info"][packageName]["buildInfo"]["prepareFunctionName"] = f"prepare_pkg_{packageName}".replace("-", "_")
+        self._storedJSONDatabase["package_info"][packageName]["buildInfo"]["buildFunctionName"] = buildPackageTemplate
+        self._storedJSONDatabase["package_info"][packageName]["buildInfo"]["prepareFunctionName"] = preparePackageTemplate
 
         # Write to database
         with open(self.DATABASE_FILE_PATH, "w") as databaseFile:

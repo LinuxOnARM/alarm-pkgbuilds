@@ -6,10 +6,10 @@
 # ------------------------------------------------------------------
 
 # Name of the Workflow
-name: LinuxOnARM Automated Packaging System
+name: LinuxOnARM - Automated Packaging System
 
 # Name of the Workflow while running
-run-name: linuxonarm-aps
+run-name: "LinuxOnARM-APS-#${{ github.run_number }}"
 
 # Workflow triggers
 on:
@@ -99,6 +99,7 @@ jobs:
       # Download runtime dependencies
       - name: ☄️ Downloading Runtime Dependencies ☄️
         run: |
+          pacman-key --init
           pacman --sync --sysupgrade --refresh --noconfirm git archlinux-keyring
 
       # Clone the repository
@@ -115,13 +116,7 @@ jobs:
       # Add and Configure GPG Key
       - name: 🔐 Adding And Configuring GPG Key 🔐
         run: |
-          rm --recursive --force --verbose /etc/pacman.d/gnupg
-          pacman-key --init
-          pacman-key --populate
-          pacman-key --populate archlinux
-          pacman -Syyu
-
-          echo "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
+          echo -e "${{ secrets.ORG_LINUX_ON_ARM_GPG_KEY }}" >> key.gpg
           pacman-key --add ./key.gpg
           pacman-key --lsign-key ./key.gpg
           sed --in-place "s|^#PACKAGER=.*|PACKAGER=\"LinuxOnARM-Project (Automated Packaging System || https://github.com/LinuxOnARM/alarm-pkgbuilds) <146043018+MaxineToTheStars@users.noreply.github.com>\"|g" /etc/makepkg.conf
